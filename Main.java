@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 // make a list of 500k numbers and randomly shuffle it and then start pulling from it.
 // 
 
-private class Node
+class Node
 {
   T item;
   int key;
@@ -18,16 +18,16 @@ class Window
 {
   public Node pred, curr;
   
-  Window(Node myPreed, Node myCurr)
+  Window(Node myPred, Node myCurr)
   {
     pred = myPred;
     curr = myCurr;
   }
   
-  Window find(Node head, int key)
+  static Window find(Node head, int key)
   {
     Node pred = null, curr = null, succ = null;
-    booleanp[] marked = false;
+    boolean[] marked = {false};
     boolean snip;
     
     retry: while(true)
@@ -55,12 +55,14 @@ class Window
 
 class LockFreeList
 {
+  Node head;
+  
   public boolean add(T item)
   {
     int key = item.hashCode();
     while(true)
     {
-      Window window = find(head, key);
+      Window window = Window.find(head, key);
       Node pred = window.pred, curr = window.curr;
       if(curr.key == key)
       {
@@ -81,7 +83,7 @@ class LockFreeList
     boolean snip;
     while(true)
     {
-      Window window = find(head, key);
+      Window window = Window.find(head, key);
       Node pred = window.pred, curr = window.curr;
       if(curr.key != key)
       {
@@ -92,7 +94,7 @@ class LockFreeList
         snip = curr.next.compareAndSet(succ, succ, false, true);
         if(!snip)
           continue;
-        pred.next.compareAndSet(curr, succ, false false);
+        pred.next.compareAndSet(curr, succ, false, false);
         return true;
       }
     }
