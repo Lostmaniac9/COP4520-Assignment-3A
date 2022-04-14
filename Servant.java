@@ -5,11 +5,6 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-
-
-
-
-
 class LockFreeList
 {
   static Node head, tail;
@@ -139,6 +134,7 @@ class LockFreeList
       boolean[] marked = {false};
       boolean snip;
       
+      // from GitHub link
       if (head.next.getReference() == tail)
       {
           return new Window(head, tail);
@@ -202,14 +198,14 @@ class Servant implements Runnable
         index.set(currentIndex.getAndIncrement());
         // add whatever value is at this index into the concurrent queue
         unprocessedPresents.add(presentBag[index.intValue()]);
-        System.out.println(currentIndex.get());
+        // System.out.println(currentIndex.get());
         
         // immediately remove it because the threads are supposed to alternate adding and removing and 
         // there's no reason to let a good present sit around
         unprocessedPresents.remove(presentBag[index.intValue()]);
         // update thankYouCardsWritten to account for the removal of the recently added present
         thankYouCardsWritten.set(thankYouCardsWritten.get() + 1);
-        System.out.println(thankYouCardsWritten.get());        
+        // System.out.println(thankYouCardsWritten.get());
       }
     }
     catch (Exception e)
